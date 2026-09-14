@@ -1,5 +1,11 @@
-const menu=document.querySelector('.menu'),nav=document.querySelector('nav');menu.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu.setAttribute('aria-expanded',open)});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
-const input=document.querySelector('#destination'),result=document.querySelector('#searchResult');function searchPlan(value){const place=(value||input.value).trim();if(!place){result.textContent='Enter a destination to search.';return}input.value=place;result.textContent=place.toLowerCase()==='sri lanka'?'Sri Lanka launch plan available below ↓':`${place} plans will appear when our live catalogue is connected.`;document.querySelector('#plans').scrollIntoView({behavior:'smooth'})}document.querySelector('#searchBtn').addEventListener('click',()=>searchPlan());document.querySelectorAll('.chips button').forEach(b=>b.addEventListener('click',()=>searchPlan(b.textContent)));input.addEventListener('keydown',e=>{if(e.key==='Enter')searchPlan()});
-const checkout=document.querySelector('#checkout');document.querySelector('.buy').addEventListener('click',()=>checkout.showModal());document.querySelector('.close').addEventListener('click',()=>checkout.close());checkout.addEventListener('click',e=>{if(e.target===checkout)checkout.close()});document.querySelector('#pay').addEventListener('click',()=>{window.location.href='https://buy.stripe.com/dRm4gz9Hb1D16gbfA4g7e01'});
-document.querySelector('#compatBtn').addEventListener('click',()=>alert('Check Settings → Mobile Data on your phone, or search your exact model for eSIM support. Your device must also be network-unlocked.'));
-const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+const menu=document.querySelector('.menu'),nav=document.querySelector('nav');
+menu.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu.setAttribute('aria-expanded',open)});
+nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
+const checkout=document.querySelector('#checkout');
+document.querySelector('.buy').addEventListener('click',()=>checkout.showModal());
+document.querySelector('.close').addEventListener('click',()=>checkout.close());
+checkout.addEventListener('click',e=>{if(e.target===checkout)checkout.close()});
+document.querySelector('#pay').addEventListener('click',()=>{window.location.href='https://buy.stripe.com/dRm4gz9Hb1D16gbfA4g7e01'});
+document.querySelector('#compatBtn').addEventListener('click',()=>alert('On iPhone, dial *#06#. If you see an EID number, your phone supports eSIM. Your device must also be network-unlocked.'));
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
