@@ -10,8 +10,9 @@
   <link rel="stylesheet" href="styles.css">
   <style>
     .destinations{padding-top:55px}.destination-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:16px;margin-top:45px}.destination-grid article{min-height:210px;border:1px solid var(--line);border-radius:20px;padding:25px;display:flex;flex-direction:column;background:#fff}.destination-grid article>span{font-size:31px}.destination-grid article div{margin-top:auto}.destination-grid small{font-size:9px;letter-spacing:.14em;color:var(--blue);font-weight:800}.destination-grid h3{font:600 26px "Playfair Display";margin:7px 0}.destination-grid p{font-size:12px;color:var(--muted);margin:0}.destination-grid a{font-size:12px;font-weight:700;color:var(--blue);margin-top:20px}.destination-grid .live-destination{background:linear-gradient(145deg,var(--navy),#071a28);color:#fff;border:0}.destination-grid .live-destination p{color:#9fb4bf}
+    .global-visual{border-radius:50% 50% 24px 24px;background:radial-gradient(circle at 70% 15%,#87dce0 0,transparent 27%),linear-gradient(145deg,#d8edef,#9fcbd0 48%,#193e50);display:grid;place-items:center}.world{width:min(340px,68%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 34% 28%,#4586ff,#174d91 47%,#08243a 78%);box-shadow:inset -28px -20px 55px #02131f73,0 30px 70px #08243a66;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}.world:before,.world:after{content:"";position:absolute;border:1px solid #ffffff57;border-radius:50%}.world:before{inset:9% 29%}.world:after{inset:28% 5%}.world>i{position:absolute;left:5%;right:5%;height:1px;background:#ffffff4d;transform:rotate(-20deg)}.world>b{font:600 62px "Playfair Display";line-height:1}.world>small{font-size:8px;letter-spacing:.22em;margin-top:11px}.point{position:absolute;width:9px;height:9px;border:2px solid white;background:#68e0d0;border-radius:50%;box-shadow:0 0 0 5px #ffffff24}.p1{left:22%;top:31%}.p2{right:18%;top:42%}.p3{left:37%;bottom:19%}.p4{right:32%;top:20%}.world-orbit{position:absolute;width:82%;height:46%;border:1px solid #ffffff70;border-radius:50%;transform:rotate(22deg)}.orbit-b{transform:rotate(-38deg);width:73%;height:58%}.global-visual .route-card{z-index:3}.route-one{left:5%;bottom:10%}.route-two{left:auto;right:4%;top:11%;bottom:auto}.coverage-card{position:absolute;left:5%;top:10%;background:#ffffffe8;padding:18px;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 15px 35px #081b2b26}.coverage-card small{font-size:8px;letter-spacing:.15em;color:var(--blue)}.coverage-card strong{font:600 18px/1.25 "Playfair Display";margin-top:6px}
     @media(max-width:900px){.destination-grid{grid-template-columns:1fr 1fr}}
-    @media(max-width:520px){.destination-grid article{min-height:180px;padding:20px}}
+    @media(max-width:520px){.destination-grid article{min-height:180px;padding:20px}.world{width:260px}.coverage-card{top:5%;left:4%}.route-two{right:2%;top:18%}.global-visual .route-card{padding:12px;font-size:10px}}
   </style>
 </head>
 <body>
@@ -28,14 +29,15 @@
         <p class="eyebrow">YOUR WORLD. YOUR CONNECTION.</p>
         <h1>Go further. Stay <em>connected.</em></h1>
         <p class="lead">One elegant way to stay online wherever your journey takes you. No airport SIM queue, no plastic card and no surprise roaming bill.</p>
-        <div class="actions"><a class="button" href="#plans">Get connected for £6.99</a><a class="text-link" href="#how">See how it works →</a></div>
-        <div class="trust"><span><b>01</b> Buy before you fly</span><span><b>02</b> Keep your usual number</span><span><b>03</b> Connect in Sri Lanka</span></div>
+        <div class="actions"><a class="button" href="#destinations">Explore destinations</a><a class="text-link" href="#how">See how it works →</a></div>
+        <div class="trust"><span><b>01</b> Buy before you fly</span><span><b>02</b> Keep your usual number</span><span><b>03</b> Travel across borders</span></div>
       </div>
-      <div class="visual reveal" aria-hidden="true">
-        <div class="sun"></div><div class="land one"></div><div class="land two"></div>
-        <div class="palm"><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="phone-card"><div class="phone-top"><span>N</span><small>NILA MOBILE</small><i>•••</i></div><p>WELCOME TO</p><strong>Sri Lanka</strong><div class="signal"><i></i><i></i><i></i><i></i><b>4G</b></div><small>Travel data ready when you land</small></div>
-        <div class="route-card"><span>London</span><i>→</i><span>Colombo</span></div>
+      <div class="visual global-visual reveal" aria-hidden="true">
+        <div class="world-orbit orbit-a"></div><div class="world-orbit orbit-b"></div>
+        <div class="world"><span class="point p1"></span><span class="point p2"></span><span class="point p3"></span><span class="point p4"></span><i></i><b>N</b><small>CONNECTED WORLDWIDE</small></div>
+        <div class="route-card route-one"><span>London</span><i>→</i><span>Europe</span></div>
+        <div class="route-card route-two"><span>Toronto</span><i>→</i><span>Asia</span></div>
+        <div class="coverage-card"><small>NILA NETWORK</small><strong>One world.<br>One connection.</strong></div>
       </div>
     </section>
     <section class="assurance reveal">
