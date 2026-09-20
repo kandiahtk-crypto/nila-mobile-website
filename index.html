@@ -506,7 +506,7 @@
 <body>
 
   <div class="announcement">
-    Travel data without borders · Sri Lanka live · France, India, USA & Canada next
+    Travel data without borders · Sri Lanka live · 3,102 worldwide plans ready to explore
   </div>
 
   <header class="site-header">
@@ -521,6 +521,7 @@
 
     <nav>
       <a href="#destinations">Destinations</a>
+      <a href="#catalogue">Catalogue</a>
       <a href="#plans">Plans</a>
       <a href="#how">How it works</a>
       <a href="#help">Help</a>
@@ -558,8 +559,8 @@
             Explore live plans
           </a>
 
-          <a class="text-link" href="#destinations">
-            Explore destinations →
+          <a class="text-link" href="#catalogue">
+            Search worldwide plans →
           </a>
 
         </div>
@@ -702,7 +703,7 @@
         aria-label="Nila Mobile travel eSIM promotional video"
       >
         <source
-          src="Nila-Mobile-TikTok-15s.mp4"
+          src="Nila-Mobile-TikTok-Elegant-Cinematic.mp4"
           type="video/mp4"
         >
         Your browser does not support video playback.
@@ -817,6 +818,64 @@
 
         </article>
 
+      </div>
+
+    </section>
+
+    <section class="catalogue-section section" id="catalogue">
+
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">WORLDWIDE eSIM CATALOGUE</p>
+          <h2>Find a plan for your journey.</h2>
+        </div>
+        <p>
+          Explore 3,102 supplier-backed plans across 238 destinations and regions.
+          Sri Lanka checkout is live today; more destinations will be activated in carefully tested batches.
+        </p>
+      </div>
+
+      <div class="catalogue-panel reveal">
+        <div class="catalogue-controls">
+          <label class="catalogue-search">
+            <span>Search destination</span>
+            <input id="catalogueSearch" type="search" placeholder="Try France, India or Europe" autocomplete="off">
+          </label>
+
+          <label>
+            <span>Plan coverage</span>
+            <select id="catalogueType">
+              <option value="all">All plans</option>
+              <option value="Single">Single country</option>
+              <option value="Regional">Regional and global</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Data allowance</span>
+            <select id="catalogueData">
+              <option value="all">Any data</option>
+              <option value="small">Up to 3 GB</option>
+              <option value="medium">5–10 GB</option>
+              <option value="large">20 GB+</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="catalogue-meta">
+          <p id="catalogueCount" aria-live="polite">Loading worldwide plans…</p>
+          <small>Prices shown in GBP. Availability and supplier pricing may change before activation.</small>
+        </div>
+
+        <div class="catalogue-grid" id="catalogueGrid" aria-live="polite"></div>
+
+        <button class="catalogue-more" id="catalogueMore" type="button" hidden>
+          Show more plans
+        </button>
+
+        <noscript>
+          <p class="catalogue-error">Enable JavaScript to search the worldwide Nila catalogue.</p>
+        </noscript>
       </div>
 
     </section>
