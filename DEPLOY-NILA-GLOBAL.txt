@@ -1,0 +1,28 @@
+NILA MOBILE GLOBAL PLATFORM
+
+Contents
+1. nila-mobile-global.html
+   Replace the repository index.html with this file.
+
+2. nila-mobile-backend-worker-GLOBAL.js
+   Replace the entire Cloudflare Worker code with this file, then deploy.
+
+3. global-catalog.json
+   Audit copy of the generated catalogue: 202 destinations and 606 plans.
+
+Safe deployment order
+1. Keep SUPPLIER_MODE set to mock.
+2. Deploy nila-mobile-backend-worker-GLOBAL.js in Cloudflare Workers.
+3. Open:
+   https://nila-mobile-backend.kandiah-tk.workers.dev/api/plans
+   Confirm the response contains 606 plans.
+4. Replace GitHub index.html with nila-mobile-global.html.
+5. Test search, all three plan choices and Stripe sandbox checkout.
+6. Keep the platform in mock/test mode until a controlled launch is approved.
+
+Important
+- The Worker now blocks all supplier purchasing when SUPPLIER_MODE is mock.
+- Every checkout validates the selected package, amount and currency.
+- The catalogue was generated from Price 4.csv.
+- Prices use a conservative GBP retail formula and retain the previously approved
+  India, USA and Canada prices where the same supplier package is selected.
