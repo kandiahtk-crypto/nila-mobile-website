@@ -395,102 +395,161 @@ catalogueMore?.addEventListener(
 );
 
 function normaliseAutomaticPlan(plan){
+  const country=String(
+    plan.country||plan.destination||''
+  ).trim();
+
+  const countryCode=String(
+    plan.countryCode||plan.coverage||''
+  ).trim().toUpperCase();
+
+  const duration=String(
+    plan.duration||
+    (plan.days?`${plan.days} days`:'30 days')
+  );
+
+  const data=String(
+    plan.data||
+    (Number.isFinite(Number(plan.gb))?`${plan.gb} GB`:'')
+  );
+
+  const amount=Number(plan.amount);
+  const existingPrice=Number(plan.price);
+
   return {
     ...plan,
-    destination:plan.country,
+    destination:country,
     type:'Single',
-    coverage:plan.countryCode,
-    networks:plan.network,
+    coverage:countryCode,
+    networks:plan.networks||plan.network||'',
     days:Number(
-      String(plan.duration||'')
-        .match(/\d+/)?.[0]||30
+      duration.match(/\d+/)?.[0]||30
     ),
-    gb:Number(
-      String(plan.data||'')
-        .match(/[\d.]+/)?.[0]||0
+    gb:/unlimited/i.test(data)
+      ?Number(
+        String(plan.highSpeed||'')
+          .match(/[\d.]+/)?.[0]||0
+      )
+      :Number(
+        data.match(/[\d.]+/)?.[0]||0
+      ),
+    price:Number.isFinite(amount)
+      ?amount/100
+      :existingPrice,
+    speed:plan.speed||(
+      /5G/i.test(plan.network||plan.networks||'')
+        ?'5G'
+        :'4G'
     ),
-    price:Number(plan.amount)/100,
-    speed:/5G/i.test(plan.network||'')
-      ?'5G'
-      :'4G',
     live:true,
     checkoutType:'automatic'
   };
 }
 
-Promise.all([
-  fetch('catalog.json')
-    .then(response=>{
-      if(!response.ok){
-        throw new Error(
-          'Catalogue unavailable'
-        );
-      }
+function validAutomaticPlan(plan){
+  return Boolean(
+    plan &&
+    plan.packageCode &&
+    String(plan.country||plan.destination||'').trim() &&
+    Number.isFinite(Number(plan.amount ?? plan.price))
+  );
+}
 
-      return response.json();
-    }),
+function applyAutomaticCatalogue(plans){
+  cataloguePlans=plans
+    .filter(validAutomaticPlan)
+    .map(normaliseAutomaticPlan);
 
-  fetch(`${WORKER_URL}/api/plans`)
-    .then(response=>{
-      if(!response.ok){
-        throw new Error(
-          'Live plans unavailable'
-        );
-      }
+  renderCatalogue();
+}
 
-      return response.json();
-    })
-])
-.then(([catalogue,liveCatalogue])=>{
-  const basePlans=
-    Array.isArray(catalogue.plans)
+async function loadCatalogue(){
+  /*
+    The Worker is the source of truth. This prevents the old 3,102-plan
+    static catalogue from being mixed into the curated live catalogue.
+  */
+  try{
+    const response=await fetch(`${WORKER_URL}/api/plans`);
+
+    if(!response.ok){
+      throw new Error('Live plans unavailable');
+    }
+
+    const liveCatalogue=await response.json();
+    const livePlans=Array.isArray(liveCatalogue.plans)
+      ?liveCatalogue.plans
+      :[];
+
+    if(!livePlans.some(validAutomaticPlan)){
+      throw new Error('Live catalogue is empty');
+    }
+
+    applyAutomaticCatalogue(livePlans);
+    return;
+  }catch(error){
+    console.warn(
+      'Live catalogue unavailable; using local fallback.',
+      error
+    );
+  }
+
+  /* Curated local copy: same three-choice/unlimited format as the Worker. */
+  try{
+    const response=await fetch('global-catalog.json');
+
+    if(!response.ok){
+      throw new Error('Local curated catalogue unavailable');
+    }
+
+    const localCatalogue=await response.json();
+    const localPlans=Array.isArray(localCatalogue.plans)
+      ?localCatalogue.plans
+      :[];
+
+    if(!localPlans.some(validAutomaticPlan)){
+      throw new Error('Local curated catalogue is empty');
+    }
+
+    applyAutomaticCatalogue(localPlans);
+    return;
+  }catch(error){
+    console.warn(
+      'Curated fallback unavailable; using legacy catalogue.',
+      error
+    );
+  }
+
+  /* Last-resort display-only fallback. */
+  try{
+    const response=await fetch('catalog.json');
+
+    if(!response.ok){
+      throw new Error('Legacy catalogue unavailable');
+    }
+
+    const catalogue=await response.json();
+    cataloguePlans=Array.isArray(catalogue.plans)
       ?catalogue.plans
       :[];
 
-  const automaticPlans=
-    Array.isArray(liveCatalogue.plans)
-      ?liveCatalogue.plans.map(
-        normaliseAutomaticPlan
-      )
-      :[];
+    renderCatalogue();
+  }catch(error){
+    console.error('Catalogue load failed.',error);
 
-  const automaticCodes=new Set(
-    automaticPlans.map(
-      plan=>plan.packageCode
-    )
-  );
-
-  cataloguePlans=[
-    ...automaticPlans,
-    ...basePlans.filter(
-      plan=>!automaticCodes.has(
-        plan.packageCode
-      )
-    )
-  ];
-
-  renderCatalogue();
-})
-.catch(()=>{
-  fetch('catalog.json')
-    .then(response=>response.json())
-    .then(catalogue=>{
-      cataloguePlans=
-        Array.isArray(catalogue.plans)
-          ?catalogue.plans
-          :[];
-
-      renderCatalogue();
-    })
-    .catch(()=>{
+    if(catalogueCount){
       catalogueCount.textContent=
         'Catalogue temporarily unavailable';
+    }
 
+    if(catalogueGrid){
       catalogueGrid.innerHTML=`
         <p class="catalogue-error">
           Please refresh the page or contact
           Nila Mobile support.
         </p>
       `;
-    });
-});
+    }
+  }
+}
+
+loadCatalogue();
