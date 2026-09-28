@@ -61,10 +61,16 @@
       refund:{title:'Cancellation and refunds',intro:'Please do not install or scan the eSIM if you may need to cancel.',steps:['Open the Refunds link at the bottom of the website and check eligibility.','Contact support using the same email address used for payment.','Include the destination and purchase date—never include card details.'],note:'An installed, activated or used eSIM may not be refundable because it is a digital product.'}
     };
 
+    function countryFlag(code){
+      const value=String(code||'').trim().toUpperCase();
+      return /^[A-Z]{2}$/.test(value)
+        ? String.fromCodePoint(...[...value].map(letter=>127397+letter.charCodeAt(0)))
+        : '🌍';
+    }
     function groupPlans(plans){
       const map=new Map();
       plans.forEach(plan=>{
-        if(!map.has(plan.country))map.set(plan.country,{country:plan.country,flag:plan.flag||'🌍',code:plan.countryCode,plans:[]});
+        if(!map.has(plan.country))map.set(plan.country,{country:plan.country,flag:countryFlag(plan.countryCode),code:plan.countryCode,plans:[]});
         map.get(plan.country).plans.push(plan);
       });
       return [...map.values()].filter(item=>item.plans.length>=3).sort((a,b)=>a.country.localeCompare(b.country));
