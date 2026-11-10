@@ -18,3 +18,7 @@ footer .country-links{display:flex;flex:0 0 100%;flex-wrap:wrap;align-items:base
 footer .country-links strong{color:var(--ink)}
 [data-country] .hero,[data-country] #filters,[data-country] #destGrid,[data-country] #showMore,[data-country] #catalogueNote,[data-country] #destinations>.section-title{display:none}
 [data-country] #destinations{padding-top:24px}
+
+.search-results{margin-top:8px;max-height:240px;overflow:auto;background:#eff3f8;border:1px solid var(--line);border-radius:14px}
+.search-results button{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:44px;padding:10px 14px;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font-weight:700}
+.search-results button:last-child{border-bottom:0}.search-results button:hover{background:#deeff6}.search-results button:focus-visible{outline-offset:-4px}.search-results p{margin:0;padding:12px 14px;color:var(--muted)}

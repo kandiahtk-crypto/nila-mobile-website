@@ -7,6 +7,7 @@ const featured=[['Japan','🇯🇵','Asia','1493976040374-85c8e12f0c0e'],['Europ
 const destinationAliases=new Map([
   ['China mainland',['🇨🇳','Asia',['mainland china']]],
   ['Hong Kong (China)',['🇭🇰','Asia',['hong kong']]],
+  ['Macao (China)',['🇲🇴','Asia',['macau']]],
   ['United States',['🇺🇸','Americas',['usa','us','america']]],
   ['United Kingdom',['🇬🇧','Europe',['uk','great britain']]]
 ]);
@@ -14,7 +15,7 @@ const meta=name=>featured.find(f=>f[0]===name)||[name,...(destinationAliases.get
 const image=m=>m[3]?`https://images.unsplash.com/photo-${m[3]}?auto=format&fit=crop&w=800&q=80`:'';
 const destinationBatch=12;
 let visibleDestinations=destinationBatch;
-let countries=[],plans=[],region='All',currency='GBP',selected=null,buying=null,bag=[],live=false;
+let countries=[],plans=[],region='Popular',currency='GBP',selected=null,buying=null,bag=[],live=false;
 try{bag=JSON.parse(localStorage.getItem('nila-plan-bag-v1')||'[]');if(!Array.isArray(bag))bag=[];bag=bag.filter(x=>typeof x==='string').slice(0,30)}catch{}
 const rates={GBP:1,USD:1.27,EUR:1.16};
 const money=n=>new Intl.NumberFormat('en-GB',{style:'currency',currency}).format(Number(n)/100*rates[currency]);
@@ -34,7 +35,22 @@ function destinationFlag(name,supplierFlag){
   return typeof supplierFlag==='string'&&/^(?:[\u{1F1E6}-\u{1F1FF}]{2})$/u.test(supplierFlag.trim())?supplierFlag.trim():localFlag;
 }
 function setCountries(){const map=new Map();plans.forEach(p=>{if(!map.has(p.country))map.set(p.country,{name:p.country,flag:destinationFlag(p.country,p.flag),plans:[]});map.get(p.country).plans.push(p)});countries=[...map.values()].sort((a,b)=>{const ai=featured.findIndex(x=>x[0]===a.name),bi=featured.findIndex(x=>x[0]===b.name);return (ai<0?999:ai)-(bi<0?999:bi)||a.name.localeCompare(b.name)});if(!live)countries=featured.map(m=>({name:m[0],flag:m[1],plans:[]}))}
-function render(){const q=$('#search').value.trim().toLowerCase();const list=countries.filter(c=>(c.name.toLowerCase().includes(q)||meta(c.name)[2].toLowerCase().includes(q)||destinationAliases.get(c.name)?.[2].includes(q))&&(region==='All'||region==='Popular'&&featured.some(m=>m[0]===c.name)||meta(c.name)[2]===region));$('#destGrid').innerHTML=list.length?list.slice(0,visibleDestinations).map(c=>{const m=meta(c.name);return `<button class="destination${image(m)?'':' no-photo'}" data-country="${esc(c.name)}" aria-pressed="${selected===c.name}"><div class="image">${image(m)?`<img src="${image(m)}" alt="${esc(c.name)}" loading="lazy">`:esc(c.flag)}<span class="badge">${esc(c.flag)}</span></div><div class="info"><h3 data-flag="${esc(c.flag)}">${esc(c.name)}</h3><p>${c.plans.length?`From <strong>${money(Math.min(...c.plans.map(p=>Number(p.amount))))}</strong> · ${c.plans.length} plans`:'Explore travel data'}</p></div></button>`}).join(''):'<div class="empty">No destinations match your search and region.<br><button type="button" class="outline" id="resetDestinations" style="margin-top:12px">Show all destinations</button></div>';$('#showMore').classList.toggle('hidden',list.length<=visibleDestinations);$('#catalogueNote').textContent=live&&!list.length?'':live?`Showing ${Math.min(list.length,visibleDestinations)} of ${list.length} matching destinations. ${currency==='GBP'?'Prices shown in GBP.':'Indicative currency conversion only; checkout charges GBP.'}`:'Live prices will appear when the catalogue connection is available.';if(selected)renderPlans();renderBag()}
+function searchRank(name,query){
+  const normalized=name.toLowerCase();
+  if(normalized===query) return 0;
+  if(normalized.startsWith(query)) return 1;
+  return 2;
+}
+function renderSearchResults(query,matches){
+  const results=$('#searchResults');
+  results.classList.toggle('hidden',!query);
+  results.innerHTML=query?(matches.length?matches.map(country=>
+    `<button type="button" data-country="${esc(country.name)}"><span>${esc(country.flag)} ${esc(country.name)}</span><span aria-hidden="true">→</span></button>`
+  ).join(''):'<p role="status">No matching destinations.</p>'):'';
+}
+const normalizeDestination=name=>name.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const searchOnlyDestinations=new Set(['afghanistan','aland islands']);
+function render(){const q=normalizeDestination($('#search').value);const list=countries.filter(c=>(q||!searchOnlyDestinations.has(normalizeDestination(c.name)))&&(normalizeDestination(c.name).includes(q)||meta(c.name)[2].toLowerCase().includes(q)||destinationAliases.get(c.name)?.[2].includes(q))&&(region==='All'||region==='Popular'&&featured.some(m=>m[0]===c.name)||meta(c.name)[2]===region));if(q)list.sort((a,b)=>searchRank(a.name,q)-searchRank(b.name,q));renderSearchResults(q,list);$('#destGrid').innerHTML=list.length?list.slice(0,visibleDestinations).map(c=>{const m=meta(c.name);return `<button class="destination${image(m)?'':' no-photo'}" data-country="${esc(c.name)}" aria-pressed="${selected===c.name}"><div class="image">${image(m)?`<img src="${image(m)}" alt="${esc(c.name)}" loading="lazy">`:esc(c.flag)}<span class="badge">${esc(c.flag)}</span></div><div class="info"><h3 data-flag="${esc(c.flag)}">${esc(c.name)}</h3><p>${c.plans.length?`From <strong>${money(Math.min(...c.plans.map(p=>Number(p.amount))))}</strong> · ${c.plans.length} plans`:'Explore travel data'}</p></div></button>`}).join(''):'<div class="empty">No destinations match your search and region.<br><button type="button" class="outline" id="resetDestinations" style="margin-top:12px">Show all destinations</button></div>';$('#showMore').classList.toggle('hidden',list.length<=visibleDestinations);$('#catalogueNote').textContent=live&&!list.length?'':live?`Showing ${Math.min(list.length,visibleDestinations)} of ${list.length} matching destinations. ${currency==='GBP'?'Prices shown in GBP.':'Indicative currency conversion only; checkout charges GBP.'}`:'Live prices will appear when the catalogue connection is available.';if(selected)renderPlans();renderBag()}
 function choose(name,scroll=true){selected=name;render();const m=meta(name);if(image(m)){$('#heroImage').src=image(m);$('#heroImage').alt=name}$('#heroTitle').textContent=name;const c=countries.find(c=>c.name===name);$('#heroPrice').textContent=c?.plans.length?`From ${money(Math.min(...c.plans.map(p=>Number(p.amount))))}`:'Explore destination-specific data';if(scroll)$('#plans').scrollIntoView({block:'start'})}
 function renderPlans(){const c=countries.find(c=>c.name===selected);if(!c)return;$('#plans').classList.remove('hidden');$('#planTitle').textContent=`${c.flag} ${c.name} plans`;$('#planGrid').innerHTML=c.plans.length?[...c.plans].sort((a,b)=>Number(a.amount)-Number(b.amount)).map(p=>`<article class="plan ${parseFloat(p.data)===20?'featured':''}"><div class="tag">${parseFloat(p.data)===20?'★ 20GB OPTION':'PREPAID TRAVEL DATA'}</div><h3>${esc(p.data||'Data plan')}</h3><p>Valid for ${esc(p.duration||'See package details')}</p><p>${esc(p.network||'Network details available from support')}<br>${esc(p.speed||'Speeds vary by network and location')}</p><div class="price">${money(p.amount)}</div><div class="actions"><button class="outline" data-save="${esc(p.packageCode)}" aria-label="Save ${esc(p.data)} ${esc(c.name)} plan">${bag.includes(p.packageCode)?'Saved ✓':'+ Bag'}</button><button class="primary" data-buy="${esc(p.packageCode)}">Buy now →</button></div></article>`).join(''):'<div class="empty">We couldn’t load current packages for this destination.<br><button class="outline" id="retryInline">Retry catalogue</button> <a class="primary" href="https://nilamobile.com/">Open existing Nila shop →</a></div>'}
 function renderBag(){$('#count').textContent=bag.length;$('#bagItems').innerHTML=bag.length?bag.map(id=>{const p=plans.find(p=>p.packageCode===id);return `<article class="cart-item"><h3>${esc(p?.country||'Saved plan')}</h3><p>${p?`${esc(p.data)} · ${esc(p.duration)} · <b>${money(p.amount)}</b>`:'Reconnect to the catalogue to check this plan’s availability.'}</p><div class="actions">${p?`<button class="primary" data-buy="${esc(id)}">Checkout this eSIM →</button>`:''}<button class="outline" data-remove="${esc(id)}">Remove</button></div></article>`}).join(''):'<div class="empty">Your bag is empty.<br>Save a plan to compare it here.</div>'}
@@ -65,5 +81,19 @@ $('#showMore').addEventListener('click',()=>{
   render();
   $('#destGrid').children[previousCount]?.focus({preventScroll:true});
 });
-$('#search').addEventListener('input',()=>{visibleDestinations=destinationBatch;render()});$('#searchForm').addEventListener('submit',e=>{e.preventDefault();$('#destinations').scrollIntoView()});$('#currency').addEventListener('change',e=>{currency=e.target.value;render()});$('#cartOpen').onclick=()=>{renderBag();$('#bag').showModal()};document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close()}}));window.addEventListener('pageshow',()=>{$('#pay').disabled=false;$('#pay').textContent='Continue to secure checkout →'});$('#year').textContent=new Date().getFullYear();save();load();
+function searchDestinations(){
+  region='All';
+  selected=null;
+  visibleDestinations=destinationBatch;
+  $('#plans').classList.add('hidden');
+  document.querySelectorAll('[data-region]').forEach(button=>button.setAttribute('aria-pressed',button.dataset.region===region));
+  render();
+}
+$('#search').addEventListener('input',searchDestinations);
+$('#searchForm').addEventListener('submit',event=>{
+  event.preventDefault();
+  searchDestinations();
+  if($('#search').value.trim()) $('#search').blur();
+  else $('#destinations').scrollIntoView();
+});$('#currency').addEventListener('change',e=>{currency=e.target.value;render()});$('#cartOpen').onclick=()=>{renderBag();$('#bag').showModal()};document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close()}}));window.addEventListener('pageshow',()=>{$('#pay').disabled=false;$('#pay').textContent='Continue to secure checkout →'});$('#year').textContent=new Date().getFullYear();save();load();
 
