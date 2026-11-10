@@ -14,6 +14,7 @@
 }
 
 .country-intro{padding:48px 0 20px}.country-intro a,.country-links a{color:#087e9b;text-decoration:underline;text-underline-offset:3px}
-.country-links{display:flex;flex-wrap:wrap;gap:12px 20px;margin:0 0 20px}
+footer .country-links{display:flex;flex:0 0 100%;flex-wrap:wrap;align-items:baseline;gap:8px 14px;font-size:12px}
+footer .country-links strong{color:var(--ink)}
 [data-country] .hero,[data-country] #filters,[data-country] #destGrid,[data-country] #showMore,[data-country] #catalogueNote,[data-country] #destinations>.section-title{display:none}
 [data-country] #destinations{padding-top:24px}
