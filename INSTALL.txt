@@ -1,0 +1,8 @@
+NILA MOBILE — APPROVED NAVY AND TURQUOISE REDESIGN
+
+Back up the GitHub repository before uploading.
+Upload the CONTENTS of this folder into the existing repository root, replacing matching files. Keep all unrelated existing files, especially CNAME, terms.html, privacy.html, refunds.html, robots.txt, backend files and settings. Do not upload the ZIP itself.
+
+The existing checkout submit handler is unchanged. No Worker, Stripe, webhook, database or supplier settings are modified. Preview noindex tags and preview labels have been removed. Sitemap entries from the existing repository have been retained.
+
+Before accepting customer orders: verify live catalogue prices, one plan selection and its Stripe checkout amount. A paid purchase and QR delivery have NOT been tested in this update. No purchase has been made.
