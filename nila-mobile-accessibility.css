@@ -1,0 +1,25 @@
+/* Nila Mobile mobile usability upgrade — presentation only, checkout logic untouched. */
+@media (max-width: 680px) {
+  body {font-size:16px;}
+  .lead, .section-title p, .compat p, .secure-section>p:not(.editorial) {font-size:17px;line-height:1.7;}
+  .destination-search-label {font-size:18px;}
+  .hero .search input, .mobile-search-dock input {font-size:18px;}
+  .hero .search .primary, .primary, .outline {font-size:16px;}
+  .chip, .filters button {font-size:15px;min-height:44px;}
+  .destination .info h3 {font-size:21px;}
+  .destination .info p {font-size:15px;}
+  .panel-head h2 {font-size:29px;line-height:1.22;}
+  .panel-head p, .plan p {font-size:16px;line-height:1.65;}
+  .plan .tag {font-size:12px;height:auto;letter-spacing:.08em;}
+  .plan h3 {font-size:32px;}
+  .plan .price {font-size:38px;line-height:1.2;}
+  .plan .actions button {min-height:50px;font-size:16px;}
+  .mobile-menu nav a {font-size:17px;min-height:46px;}
+  .dock-search-label {font-size:15px;}
+  .mobile-search-dock form button {min-height:48px;height:48px;flex-basis:48px;width:48px;}
+  .check,.modal-note,.cart-item p, .step p, details p {font-size:15px;line-height:1.65;}
+  summary {font-size:16px;}
+  /* Prevent the persistent search bar from hiding plan prices / purchase buttons. */
+  body:has(#plans:not(.hidden)) .mobile-search-dock {display:none;}
+  body:has(#plans:not(.hidden)) {padding-bottom:18px;}
+}
